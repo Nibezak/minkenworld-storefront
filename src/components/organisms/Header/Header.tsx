@@ -13,6 +13,7 @@ import { listCategories } from "@/lib/data/categories"
 import { listRegions } from "@/lib/data/regions"
 import { getUserWishlists } from "@/lib/data/wishlist"
 import { retrieveCustomer } from "@/lib/data/customer"
+import { listCollections } from "@/lib/data/collections"
 import { ParentCategoryLinks } from "@/components/molecules/ParentCategoryLinks/ParentCategoryLinks"
 
 export const Header = async () => {
@@ -33,6 +34,9 @@ export const Header = async () => {
     categories: HttpTypes.StoreProductCategory[]
     parentCategories: HttpTypes.StoreProductCategory[]
   }
+
+  const collections = await listCollections()
+
   return (
     <header>
       <div className="flex py-2 lg:px-8 px-4 md:px-5">
@@ -49,9 +53,9 @@ export const Header = async () => {
         <div className="flex lg:justify-center lg:w-1/3 items-center pl-4 lg:pl-0">
           <LocalizedClientLink href="/" className="text-2xl font-bold">
             <Image
-              src="/Logo.svg"
-              width={126}
-              height={40}
+              src="/result_0.png"
+              width={189}
+              height={60}
               alt="Logo"
               priority
             />
@@ -59,23 +63,25 @@ export const Header = async () => {
         </div>
         <div className="flex items-center justify-end gap-2 lg:gap-4 w-full lg:w-1/3 py-2">
           <CountrySelector regions={regions} />
-          {isLoggedIn && <MessageButton />}
-          <UserDropdown isLoggedIn={isLoggedIn} />
-          {isLoggedIn && (
-            <LocalizedClientLink href="/user/wishlist" className="relative">
-              <HeartIcon size={20} />
-              {Boolean(wishlistCount) && (
-                <Badge className="absolute -top-2 -right-2 w-4 h-4 p-0">
-                  {wishlistCount}
-                </Badge>
-              )}
-            </LocalizedClientLink>
-          )}
+          <div className="hidden lg:flex items-center gap-2 lg:gap-4">
+            {isLoggedIn && <MessageButton />}
+            <UserDropdown isLoggedIn={isLoggedIn} />
+            {isLoggedIn && (
+              <LocalizedClientLink href="/user/wishlist" className="relative">
+                <HeartIcon size={20} />
+                {Boolean(wishlistCount) && (
+                  <Badge className="absolute -top-2 -right-2 w-4 h-4 p-0">
+                    {wishlistCount}
+                  </Badge>
+                )}
+              </LocalizedClientLink>
+            )}
+          </div>
 
           <CartDropdown />
         </div>
       </div>
-      <Navbar categories={categories} parentCategories={parentCategories} />
+      <Navbar categories={categories} parentCategories={parentCategories} collections={collections.collections} />
     </header>
   )
 }

@@ -1,4 +1,5 @@
-import { Footer, Header } from "@/components/organisms"
+import { Footer, Header, MobileBottomNav } from "@/components/organisms"
+import { ShoppingAssistant } from "@/components/organisms/ShoppingAssistant/ShoppingAssistant"
 import { retrieveCustomer } from "@/lib/data/customer"
 import { checkRegion } from "@/lib/helpers/check-region"
 import { Session } from "@talkjs/react"
@@ -21,12 +22,21 @@ export default async function RootLayout({
     return redirect("/")
   }
 
+  const isLoggedIn = Boolean(user)
+
   if (!APP_ID || !user)
     return (
       <>
         <Header />
-        {children}
+        <div className="pb-16 lg:pb-0">
+          {children}
+        </div>
+        <MobileBottomNav 
+          wishlistCount={0} 
+          isLoggedIn={isLoggedIn} 
+        />
         <Footer />
+        <ShoppingAssistant />
       </>
     )
 
@@ -34,8 +44,15 @@ export default async function RootLayout({
     <>
       <Session appId={APP_ID} userId={user.id}>
         <Header />
-        {children}
+        <div className="pb-16 lg:pb-0">
+          {children}
+        </div>
+        <MobileBottomNav 
+          wishlistCount={0} 
+          isLoggedIn={isLoggedIn} 
+        />
         <Footer />
+        <ShoppingAssistant />
       </Session>
     </>
   )

@@ -1,17 +1,15 @@
 import { ProductListingSkeleton } from "@/components/organisms/ProductListingSkeleton/ProductListingSkeleton"
 import { getCategoryByHandle } from "@/lib/data/categories"
 import { Suspense } from "react"
-
 import type { Metadata } from "next"
 import { Breadcrumbs } from "@/components/atoms"
-import { AlgoliaProductsListing, ProductListing } from "@/components/sections"
 import { notFound } from "next/navigation"
-import isBot from "@/lib/helpers/isBot"
 import { headers } from "next/headers"
 import Script from "next/script"
 import { getRegion, listRegions } from "@/lib/data/regions"
 import { listProducts } from "@/lib/data/products"
 import { toHreflang } from "@/lib/helpers/hreflang"
+import { SimpleCategoryView } from "./SimpleCategoryView"
 
 export const revalidate = 60
 
@@ -76,9 +74,6 @@ export async function generateMetadata({
   }
 }
 
-const ALGOLIA_ID = process.env.NEXT_PUBLIC_ALGOLIA_ID
-const ALGOLIA_SEARCH_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY
-
 async function Category({
   params,
 }: {
@@ -94,9 +89,6 @@ async function Category({
   if (!category) {
     return notFound()
   }
-  const currency_code = (await getRegion(locale))?.currency_code || "usd"
-  const ua = (await headers()).get("user-agent") || ""
-  const bot = isBot(ua)
 
   const breadcrumbsItems = [
     {
@@ -105,25 +97,10 @@ async function Category({
     },
   ]
 
-  // Small cached list for JSON-LD itemList
   const headersList = await headers()
   const host = headersList.get("host")
   const protocol = headersList.get("x-forwarded-proto") || "https"
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`
-  const {
-    response: { products: jsonLdProducts },
-  } = await listProducts({
-    countryCode: locale,
-    queryParams: { limit: 8, order: "created_at", fields: "id,title,handle" },
-    category_id: category.id,
-  })
-
-  const itemList = jsonLdProducts.slice(0, 8).map((p, idx) => ({
-    "@type": "ListItem",
-    position: idx + 1,
-    url: `${baseUrl}/${locale}/products/${p.handle}`,
-    name: p.title,
-  }))
 
   return (
     <main className="container">
@@ -145,17 +122,7 @@ async function Category({
           }),
         }}
       />
-      <Script
-        id="ld-itemlist-category"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            itemListElement: itemList,
-          }),
-        }}
-      />
+
       <div className="hidden md:block mb-2">
         <Breadcrumbs items={breadcrumbsItems} />
       </div>
@@ -163,15 +130,7 @@ async function Category({
       <h1 className="heading-xl uppercase">{category.name}</h1>
 
       <Suspense fallback={<ProductListingSkeleton />}>
-        {bot || !ALGOLIA_ID || !ALGOLIA_SEARCH_KEY ? (
-          <ProductListing category_id={category.id} showSidebar locale={locale} />
-        ) : (
-          <AlgoliaProductsListing
-            category_id={category.id}
-            locale={locale}
-            currency_code={currency_code}
-          />
-        )}
+        <SimpleCategoryView locale={locale} categoryId={category.id} />
       </Suspense>
     </main>
   )

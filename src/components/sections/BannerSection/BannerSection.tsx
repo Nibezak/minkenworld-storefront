@@ -9,17 +9,16 @@ export const BannerSection = () => {
         <div className="py-6 px-6 flex flex-col h-full justify-between border border-secondary rounded-sm">
           <div className="mb-8 lg:mb-48">
             <span className="text-sm inline-block px-4 py-1 border border-secondary rounded-sm">
-              #COLLECTION
+              #FEATURED
             </span>
             <h2 className="display-sm">
-              BOHO VIBES: WHERE COMFORT MEETS CREATIVITY
+              DISCOVER UNIQUE FINDS
             </h2>
             <p className="text-lg text-tertiary max-w-lg">
-              Discover boho styles that inspire adventure and embrace the beauty
-              of the unconventional.
+              From dream homes and reliable vehicles to rare collectibles and everyday essentials. Discover unique items that match your lifestyle and budget.
             </p>
           </div>
-          <LocalizedClientLink href="/collections/boho">
+          <LocalizedClientLink href="/categories">
             <Button size="large" className="w-fit bg-secondary/10">
               EXPLORE
             </Button>
@@ -29,8 +28,8 @@ export const BannerSection = () => {
           <Image
             loading="lazy"
             fetchPriority="high"
-            src="/images/banner-section/Image.jpg"
-            alt="Boho fashion collection - Model wearing a floral dress with yellow boots"
+            src="/images/image.png"
+            alt="Featured marketplace items"
             width={700}
             height={600}
             className="object-cover object-top rounded-sm"

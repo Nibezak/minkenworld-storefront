@@ -75,7 +75,7 @@ Make a .env.local file and copy the code below
 ```js
 # API URL
 MEDUSA_BACKEND_URL=http://localhost:9000
-# Your publishable key generated in mercur admin panel
+# Your publishable key generated in Minken Admin Panel
 NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=
 # Your public url
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
@@ -86,7 +86,7 @@ NEXT_PUBLIC_STRIPE_KEY=supersecret
 # Backend cookie secret
 REVALIDATE_SECRET=supersecret
 # Your site name in metadata
-NEXT_PUBLIC_SITE_NAME="Fleek Marketplace"
+NEXT_PUBLIC_SITE_NAME="MINKENWORLD MARKETPLACE"
 # Your site description in metadata
 NEXT_PUBLIC_SITE_DESCRIPTION="Fleek Markeplace"
 # Algolia Application ID

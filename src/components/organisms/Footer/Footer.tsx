@@ -3,7 +3,7 @@ import footerLinks from "@/data/footerLinks"
 
 export function Footer() {
   return (
-    <footer className="bg-primary container">
+    <footer className="hidden md:block bg-primary container">
       <div className="grid grid-cols-1 lg:grid-cols-3">
         {/* Customer Services Column */}
         <div className="p-6 border rounded-sm">
@@ -61,7 +61,7 @@ export function Footer() {
       </div>
 
       <div className="py-6 border rounded-sm ">
-        <p className="text-md text-secondary text-center ">© 2024 Fleek</p>
+        <p className="text-md text-secondary text-center ">© 2026 MinkenWorld</p>
       </div>
     </footer>
   )

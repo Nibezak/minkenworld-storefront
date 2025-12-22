@@ -41,11 +41,11 @@ export const ProductCard = ({
           title={`View ${productName}`}
         >
           <div className="overflow-hidden rounded-sm w-full h-full flex justify-center align-center ">
-            {product.thumbnail ? (
+            {api_product?.thumbnail || api_product?.images?.[0]?.url ? (
               <Image
                 priority
                 fetchPriority="high"
-                src={decodeURIComponent(product.thumbnail)}
+                src={decodeURIComponent(api_product.thumbnail || api_product.images?.[0]?.url || '')}
                 alt={`${productName} image`}
                 width={100}
                 height={100}

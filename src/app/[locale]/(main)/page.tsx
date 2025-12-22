@@ -10,6 +10,7 @@ import {
 import type { Metadata } from "next"
 import { headers } from "next/headers"
 import Script from "next/script"
+import Image from "next/image"
 import { listRegions } from "@/lib/data/regions"
 import { toHreflang } from "@/lib/helpers/hreflang"
 
@@ -49,8 +50,7 @@ export async function generateMetadata({
   }
 
   const title = "Home"
-  const description =
-    "Welcome to Mercur B2C Demo! Create a modern marketplace that you own and customize in every aspect with high-performance, fully customizable storefront."
+  const description = "Buy and sell anything"
   const ogImage = "/B2C_Storefront_Open_Graph.png"
   const canonical = `${baseUrl}/${locale}`
 
@@ -78,13 +78,13 @@ export async function generateMetadata({
     openGraph: {
       title: `${title} | ${
         process.env.NEXT_PUBLIC_SITE_NAME ||
-        "Mercur B2C Demo - Marketplace Storefront"
+        "Minken - Marketplace Storefront"
       }`,
       description,
       url: canonical,
       siteName:
         process.env.NEXT_PUBLIC_SITE_NAME ||
-        "Mercur B2C Demo - Marketplace Storefront",
+        "Minken - Marketplace Storefront",
       type: "website",
       images: [
         {
@@ -93,7 +93,7 @@ export async function generateMetadata({
           height: 630,
           alt:
             process.env.NEXT_PUBLIC_SITE_NAME ||
-            "Mercur B2C Demo - Marketplace Storefront",
+            "Minken - Marketplace Storefront",
         },
       ],
     },
@@ -120,7 +120,7 @@ export default async function Home({
 
   const siteName =
     process.env.NEXT_PUBLIC_SITE_NAME ||
-    "Mercur B2C Demo - Marketplace Storefront"
+    "Minken - Marketplace Storefront"
 
   return (
     <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start text-primary">
@@ -160,26 +160,30 @@ export default async function Home({
         }}
       />
 
+      <div className="px-4 lg:px-8 w-full text-center">
+        <HomeCategories heading="BROWSE BY CATEGORY" />
+      </div>
+
+      <div className="px-4 lg:px-8 w-full">
+        <HomeProductSection heading="trending listings" locale={locale} home />
+      </div>
+
       <Hero
-        image="/images/hero/Image.jpg"
-        heading="Snag your style in a flash"
-        paragraph="Buy, sell, and discover pre-loved gems from the trendiest brands."
+        image="/images/render-preview.jpg"
+        heading="Find what you need, sell what you want."
+        paragraph="Buy, sell, and discover everything from homes and cars to gadgets and more."
         buttons={[
           { label: "Buy now", path: "/categories" },
           {
             label: "Sell now",
             path:
               process.env.NEXT_PUBLIC_VENDOR_URL ||
-              "https://vendor.mercurjs.com",
+              "https://vendor.minkenhomes.com",
           },
         ]}
       />
-      <div className="px-4 lg:px-8 w-full">
-        <HomeProductSection heading="trending listings" locale={locale} home />
-      </div>
-      <div className="px-4 lg:px-8 w-full">
-        <HomeCategories heading="SHOP BY CATEGORY" />
-      </div>
+
+
       <BannerSection />
       <ShopByStyleSection />
       <BlogSection />

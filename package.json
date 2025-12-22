@@ -11,6 +11,9 @@
   "dependencies": {
     "@headlessui/react": "^2.2.1",
     "@hookform/resolvers": "^3.10.0",
+    "@langchain/core": "^1.1.7",
+    "@langchain/langgraph": "^1.0.7",
+    "@langchain/openai": "^1.2.0",
     "@medusajs/js-sdk": "^2.2.0",
     "@medusajs/ui": "^4.0.7",
     "@stripe/react-stripe-js": "^3.7.0",
@@ -27,6 +30,7 @@
     "lodash": "^4.17.21",
     "next": "15.5.7",
     "next-intl": "^3.26.3",
+    "openai": "^6.15.0",
     "react": "^19.2.1",
     "react-country-flag": "^3.1.0",
     "react-dom": "^19.0.0",
@@ -34,15 +38,16 @@
     "react-i18next": "^15.5.2",
     "react-instantsearch": "^7.15.3",
     "react-instantsearch-nextjs": "^0.4.4",
+    "react-markdown": "^10.1.0",
     "tailwind-merge": "^2.6.0",
     "talkjs": "^0.37.0",
     "uuid": "^11.0.5",
-    "zod": "^3.24.1"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@chromatic-com/storybook": "^3.2.3",
     "@eslint/eslintrc": "^3",
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",
     "@storybook/addon-onboarding": "^8.4.7",

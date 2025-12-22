@@ -64,6 +64,14 @@ export const listProducts = async ({
     ...(await getAuthHeaders())
   };
 
+  console.log("=== CONNECTIVITY TEST ===");
+  console.log("Backend URL:", process.env.MEDUSA_BACKEND_URL);
+  console.log("Publishable Key:", process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ? "SET" : "MISSING");
+  console.log("Country code:", countryCode);
+  console.log("Region:", region);
+  console.log("All env vars:", Object.keys(process.env).filter(k => k.includes('MEDUSA') || k.includes('NEXT_PUBLIC')));
+  console.log("=== END CONNECTIVITY TEST ===");
+
   const useCached = forceCache || (limit <= 8 && !category_id && !collection_id);
 
   return sdk.client
@@ -80,8 +88,9 @@ export const listProducts = async ({
         offset,
         region_id: region?.id,
         fields:
-          '*variants.calculated_price,+variants.inventory_quantity,*seller,*variants,*seller.products,' +
-          '*seller.reviews,*seller.reviews.customer,*seller.reviews.seller,*seller.products.variants,*attribute_values,*attribute_values.attribute',
+          '*variants.calculated_price,*seller,*variants,*seller.products,' +
+          '*seller.reviews,*seller.reviews.customer,*seller.reviews.seller,*seller.products.variants,' +
+          '*attribute_values,*attribute_values.attribute,*images,*thumbnail,*variants.images',
         ...queryParams
       },
       headers,
@@ -89,29 +98,29 @@ export const listProducts = async ({
       cache: useCached ? 'force-cache' : 'no-cache'
     })
     .then(({ products: productsRaw, count }) => {
-      const products = productsRaw.filter(product => product.seller?.store_status !== 'SUSPENDED');
-
+      console.log("=== BASIC PRODUCT TEST ===");
+      console.log("API Response received");
+      console.log("Products array exists:", !!productsRaw);
+      console.log("Products count:", productsRaw?.length || 0);
+      console.log("Count value:", count);
+      
+      if (!productsRaw || productsRaw.length === 0) {
+        console.log("NO PRODUCTS RETURNED FROM API");
+        return {
+          response: { products: [], count: 0 },
+          nextPage: null,
+          queryParams
+        };
+      }
+      
+      console.log("First product:", productsRaw[0]);
+      console.log("=== END BASIC TEST ===");
+      
       const nextPage = count > offset + limit ? pageParam + 1 : null;
-
-      const response = products.filter(prod => {
-        // @ts-ignore Property 'seller' exists but TypeScript doesn't recognize it
-        const reviews = prod.seller?.reviews.filter(item => !!item) ?? [];
-        return (
-          // @ts-ignore Property 'seller' exists but TypeScript doesn't recognize it
-          prod?.seller && {
-            ...prod,
-            seller: {
-              // @ts-ignore Property 'seller' exists but TypeScript doesn't recognize it
-              ...prod.seller,
-              reviews
-            }
-          }
-        );
-      });
 
       return {
         response: {
-          products: response,
+          products: productsRaw,
           count
         },
         nextPage: nextPage,
@@ -166,28 +175,37 @@ export const listProductsWithSort = async ({
     pageParam: 0,
     queryParams: {
       ...queryParams,
-      limit: 100
+      limit: 100,
+      fields: '*variants.calculated_price,*seller,*variants,*images,*thumbnail,*variants.images'
     },
     category_id,
     collection_id,
     countryCode
   });
 
+  console.log("=== SORTED PRODUCTS DEBUG ===");
+  console.log("Products from listProducts:", products.length);
+  console.log("Seller ID filter:", seller_id);
+  console.log("First product thumbnail:", products[0]?.thumbnail);
+  console.log("First product images:", products[0]?.images);
+
   const filteredProducts = seller_id
     ? products.filter(product => product.seller?.id === seller_id)
     : products;
 
-  const pricedProducts = filteredProducts.filter(prod =>
-    prod.variants?.some(variant => variant.calculated_price !== null)
-  );
+  console.log("After seller filter:", filteredProducts.length);
 
-  const sortedProducts = sortProducts(pricedProducts, sortBy);
+  const sortedProducts = sortProducts(filteredProducts, sortBy);
+  console.log("After sorting:", sortedProducts.length);
 
   const pageParam = (page - 1) * limit;
 
   const nextPage = count > pageParam + limit ? pageParam + limit : null;
 
   const paginatedProducts = sortedProducts.slice(pageParam, pageParam + limit);
+  console.log("Final paginated products:", paginatedProducts.length);
+  console.log("Final product thumbnail:", paginatedProducts[0]?.thumbnail);
+  console.log("=== END SORTED DEBUG ===");
 
   return {
     response: {

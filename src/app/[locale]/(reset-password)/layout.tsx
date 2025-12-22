@@ -13,9 +13,9 @@ export default function ResetPasswordLayout({
           <div className="flex items-center justify-center pl-4 lg:pl-0 w-full">
             <LocalizedClientLink href="/" className="text-2xl font-bold">
               <Image
-                src="/Logo.svg"
-                width={126}
-                height={40}
+                src="/result_0.png"
+                width={189}
+                height={60}
                 alt="Logo"
                 priority
               />

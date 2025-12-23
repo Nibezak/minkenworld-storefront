@@ -21,7 +21,13 @@ export const ProductListing = async ({
   showSidebar?: boolean
   locale?: string
 }) => {
-  const { response } = await listProductsWithSort({
+  console.log("=== ProductListing DEBUG ===");
+  console.log("seller_id:", seller_id);
+  console.log("category_id:", category_id);
+  console.log("collection_id:", collection_id);
+  console.log("locale:", locale);
+  
+  const result = await listProductsWithSort({
     seller_id,
     category_id,
     collection_id,
@@ -32,7 +38,12 @@ export const ProductListing = async ({
     },
   })
 
-  const { products } = await response
+  console.log("Result from listProductsWithSort:", result);
+  
+  const products = result.response.products;
+
+  console.log("Products count:", products.length);
+  console.log("=== END ProductListing DEBUG ===");
 
   const count = products.length
 
@@ -44,7 +55,7 @@ export const ProductListing = async ({
       <div className="hidden md:block">
         <ProductListingActiveFilters />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 mt-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 mt-6 gap-6">
         {showSidebar && <ProductSidebar />}
         <section className={showSidebar ? "col-span-3" : "col-span-4"}>
           <div className="flex flex-wrap gap-4">

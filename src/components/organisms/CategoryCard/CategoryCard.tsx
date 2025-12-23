@@ -4,7 +4,7 @@ import Image from "next/image"
 export function CategoryCard({
   category,
 }: {
-  category: { name: string; handle: string }
+  category: { name: string; handle: string; image?: string }
 }) {
   return (
     <LocalizedClientLink
@@ -14,7 +14,7 @@ export function CategoryCard({
       <div className="flex relative aspect-square overflow-hidden w-[200px]">
         <Image
           loading="lazy"
-          src={`/images/categories/${category.handle}.png`}
+          src={category.image || `/images/categories/${category.handle}.png`}
           alt={`category - ${category.name}`}
           width={200}
           height={200}
@@ -28,3 +28,4 @@ export function CategoryCard({
     </LocalizedClientLink>
   )
 }
+

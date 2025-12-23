@@ -32,12 +32,14 @@ export const SellerHeading = ({
         )}
       </div>
       <div className="px-5 pb-5">
-        <p
-          dangerouslySetInnerHTML={{
-            __html: seller.description,
-          }}
-          className="label-md"
-        />
+        {seller.description && (
+          <p
+            dangerouslySetInnerHTML={{
+              __html: seller.description || "",
+            }}
+            className="label-md"
+          />
+        )}
       </div>
     </div>
   )

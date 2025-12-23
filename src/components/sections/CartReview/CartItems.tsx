@@ -32,18 +32,18 @@ function groupItemsBySeller(cart: HttpTypes.StoreCart) {
       }
       groupedBySeller[seller.id].items.push(item)
     } else {
-      if (!groupedBySeller["fleek"]) {
-        groupedBySeller["fleek"] = {
+      if (!groupedBySeller["Minkenworld"]) {
+        groupedBySeller["Minkenworld"] = {
           seller: {
-            name: "Fleek",
-            id: "fleek",
+            name: "Minkenworld",
+            id: "Minkenworld",
             photo: "/result_0.png",
             created_at: new Date(),
           },
           items: [],
         }
       }
-      groupedBySeller["fleek"].items.push(item)
+      groupedBySeller["Minkenworld"].items.push(item)
     }
   })
 

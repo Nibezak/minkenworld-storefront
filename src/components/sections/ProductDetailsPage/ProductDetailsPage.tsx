@@ -22,6 +22,35 @@ export const ProductDetailsPage = async ({
     return NotFound()
   }
 
+  // Get seller products, excluding current product
+  const sellerProducts = (prod.seller?.products || []).filter((p: any) => p.id !== prod.id)
+  
+  let displayedProducts = [...sellerProducts]
+  let sectionHeading = "More from this seller"
+
+  // If fewer than 3 products, fetch more from other sellers
+  if (displayedProducts.length < 3) {
+    sectionHeading = "More Products"
+    
+    // Fetch more products to fill the recommendations
+    const { response: { products: otherProducts } } = await listProducts({
+      countryCode: locale,
+      queryParams: { 
+        limit: 10,
+        // Exclude current product and already included seller products
+        id: { gt: "" } // Medusa hack to get all, we'll filter manually
+      },
+    })
+
+    // Filter out current product and duplicates
+    const additionalProducts = otherProducts.filter(p => 
+      p.id !== prod.id && 
+      !displayedProducts.find(dp => dp.id === p.id)
+    )
+
+    displayedProducts = [...displayedProducts, ...additionalProducts].slice(0, 10)
+  }
+
   return (
     <>
       <div className="flex flex-col md:flex-row lg:gap-12">
@@ -34,8 +63,8 @@ export const ProductDetailsPage = async ({
       </div>
       <div className="my-8">
         <HomeProductSection
-          heading="More from this seller"
-          products={prod.seller?.products}
+          heading={sectionHeading}
+          products={displayedProducts}
           // seller_handle={prod.seller?.handle}
           locale={locale}
         />

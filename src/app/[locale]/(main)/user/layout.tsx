@@ -3,5 +3,5 @@ export default function UserLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <div className="-mt-6">{children}</div>
+  return <div className="-mt-6 pb-32 lg:pb-0">{children}</div>
 }

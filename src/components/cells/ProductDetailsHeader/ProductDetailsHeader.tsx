@@ -11,6 +11,7 @@ import { WishlistButton } from "../WishlistButton/WishlistButton"
 import { Wishlist } from "@/types/wishlist"
 import { toast } from "@/lib/helpers/toast"
 import { useCartContext } from "@/components/providers"
+import { useState } from "react"
 
 const optionsAsKeymap = (
   variantOptions: HttpTypes.StoreProductVariant["options"]
@@ -41,6 +42,7 @@ export const ProductDetailsHeader = ({
 }) => {
   const { addToCart, onAddToCart, cart, isAddingItem } = useCartContext()
   const { allSearchParams } = useGetAllSearchParams()
+  const [quantity, setQuantity] = useState(1)
 
   const { cheapestVariant, cheapestPrice } = getProductPrice({
     product,
@@ -73,20 +75,28 @@ export const ProductDetailsHeader = ({
     variantId,
   })
 
-  const variantStock =
-    product.variants?.find(({ id }) => id === variantId)?.inventory_quantity ||
-    0
+  const selectedVariantData = product.variants?.find(({ id }) => id === variantId)
+  
+  const variantStock = selectedVariantData?.inventory_quantity || 0
+  const manageInventory = selectedVariantData?.manage_inventory ?? false
 
   const variantHasPrice = !!product.variants?.find(({ id }) => id === variantId)
     ?.calculated_price
 
-  const isVariantStockMaxLimitReached =
-    (cart?.items?.find((item) => item.variant_id === variantId)?.quantity ??
-      0) >= variantStock
+  // If inventory is not managed, treat as always available
+  const isOutOfStock = manageInventory ? variantStock <= 0 : false
+  
+  // Calculate available stock (considering items already in cart)
+  const cartQuantity = cart?.items?.find((item) => item.variant_id === variantId)?.quantity ?? 0
+  const availableStock = manageInventory ? Math.max(0, variantStock - cartQuantity) : 999
+  
+  const isVariantStockMaxLimitReached = manageInventory
+    ? (cartQuantity >= variantStock)
+    : false
 
   // add the selected variant to the cart
   const handleAddToCart = async () => {
-    if (!variantId || !hasAnyPrice || isVariantStockMaxLimitReached) return
+    if (!variantId || !hasAnyPrice || isVariantStockMaxLimitReached || quantity <= 0) return
 
     const subtotal = +(variantPrice?.calculated_price_without_tax_number || 0)
     const total = +(variantPrice?.calculated_price_number || 0)
@@ -94,10 +104,10 @@ export const ProductDetailsHeader = ({
     const storeCartLineItem = {
       thumbnail: product.thumbnail || "",
       product_title: product.title,
-      quantity: 1,
-      subtotal,
-      total,
-      tax_total: total - subtotal,
+      quantity: quantity,
+      subtotal: subtotal * quantity,
+      total: total * quantity,
+      tax_total: (total - subtotal) * quantity,
       variant_id: variantId,
       product_id: product.id,
       variant: product.variants?.find(({ id }) => id === variantId),
@@ -109,9 +119,11 @@ export const ProductDetailsHeader = ({
     try {
       await addToCart({
         variantId: variantId,
-        quantity: 1,
+        quantity: quantity,
         countryCode: locale,
       })
+      // Reset quantity after successful add
+      setQuantity(1)
     } catch (error) {
       toast.error({
         title: "Error adding to cart",
@@ -120,7 +132,7 @@ export const ProductDetailsHeader = ({
     }
   }
 
-  const isAddToCartDisabled = !variantStock || !variantHasPrice || !hasAnyPrice || isVariantStockMaxLimitReached
+  const isAddToCartDisabled = isOutOfStock || !variantHasPrice || !hasAnyPrice || isVariantStockMaxLimitReached
 
   return (
     <div className="border rounded-sm p-5">
@@ -163,6 +175,49 @@ export const ProductDetailsHeader = ({
       {hasAnyPrice && (
         <ProductVariants product={product} selectedVariant={selectedVariant} />
       )}
+      
+      {/* Quantity Selector */}
+      {hasAnyPrice && !isOutOfStock && (
+        <div className="mb-3">
+          <label className="label-sm text-secondary mb-2 block">Quantity</label>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              disabled={quantity <= 1}
+              className="w-10 h-10 border rounded flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="text-lg">−</span>
+            </button>
+            <input
+              type="number"
+              min="1"
+              max={manageInventory ? availableStock : undefined}
+              value={quantity}
+              onChange={(e) => {
+                const val = parseInt(e.target.value) || 1
+                const maxQty = manageInventory ? availableStock : 999
+                setQuantity(Math.max(1, Math.min(val, maxQty)))
+              }}
+              className="w-20 h-10 text-center border rounded"
+            />
+            <button
+              type="button"
+              onClick={() => setQuantity(Math.min(manageInventory ? availableStock : 999, quantity + 1))}
+              disabled={manageInventory && quantity >= availableStock}
+              className="w-10 h-10 border rounded flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="text-lg">+</span>
+            </button>
+            {manageInventory && (
+              <span className="text-sm text-secondary">
+                {availableStock} available
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+      
       {/* Add to Cart */}
       <Button
         onClick={handleAddToCart}
@@ -173,9 +228,9 @@ export const ProductDetailsHeader = ({
       >
         {!hasAnyPrice
           ? "NOT AVAILABLE IN YOUR REGION"
-          : variantStock && variantHasPrice
-          ? "ADD TO CART"
-          : "OUT OF STOCK"}
+          : isOutOfStock
+          ? "OUT OF STOCK"
+          : "ADD TO CART"}
       </Button>
       {/* Seller message */}
 

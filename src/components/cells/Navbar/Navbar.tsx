@@ -22,15 +22,18 @@ export const Navbar = ({
           {collections && collections.length > 0 && (
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-500">|</span>
-              {collections.slice(0, 3).map((collection) => (
-                <LocalizedClientLink
-                  key={collection.id}
-                  href={`/collections/${collection.handle}`}
-                  className="label-md uppercase px-2 py-1 text-primary hover:text-gray-600 transition-colors"
-                >
-                  {collection.title}
-                </LocalizedClientLink>
-              ))}
+              {collections.map((collection) => {
+                console.log('Rendering collection:', collection.title);
+                return (
+                  <LocalizedClientLink
+                    key={collection.id}
+                    href={`/collections/${collection.handle}`}
+                    className="label-md uppercase px-2 py-1 text-primary hover:text-gray-600 transition-colors"
+                  >
+                    {collection.title}
+                  </LocalizedClientLink>
+                );
+              })}
             </div>
           )}
         </div>

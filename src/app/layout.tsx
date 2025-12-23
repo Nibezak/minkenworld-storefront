@@ -31,6 +31,11 @@ export const metadata: Metadata = {
     languages: {
       'x-default': process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
     }
+  },
+  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: '/images/minkenworld.png',
+    apple: '/images/minkenworld.png',
   }
 };
 
@@ -41,7 +46,6 @@ export default async function RootLayout({
 }>) {
   const cart = await retrieveCart();
 
-  const ALGOLIA_APP = process.env.NEXT_PUBLIC_ALGOLIA_ID;
   // default lang updated by HtmlLangSetter
   const htmlLang = 'en';
 
@@ -52,8 +56,6 @@ export default async function RootLayout({
     >
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/result_0.png" />
         <meta name="theme-color" content="#000000" />
         <link
           rel="preconnect"
@@ -82,28 +84,6 @@ export default async function RootLayout({
           rel="dns-prefetch"
           href="https://i.imgur.com"
         />
-        {ALGOLIA_APP && (
-          <>
-            <link
-              rel="preconnect"
-              href="https://algolia.net"
-              crossOrigin="anonymous"
-            />
-            <link
-              rel="preconnect"
-              href="https://algolianet.com"
-              crossOrigin="anonymous"
-            />
-            <link
-              rel="dns-prefetch"
-              href="https://algolia.net"
-            />
-            <link
-              rel="dns-prefetch"
-              href="https://algolianet.com"
-            />
-          </>
-        )}
         {/* Image origins for faster LCP */}
         <link
           rel="preconnect"

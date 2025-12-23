@@ -37,7 +37,11 @@ export const listProducts = async ({
   nextPage: number | null;
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams;
 }> => {
+  console.log("=== LIST PRODUCTS CALLED ===");
+  console.log("Parameters:", { pageParam, category_id, collection_id, countryCode, regionId, limit: queryParams?.limit });
+  
   if (!countryCode && !regionId) {
+    console.log("ERROR: No country code or region ID provided!");
     throw new Error('Country code or region ID is required');
   }
 
@@ -48,16 +52,18 @@ export const listProducts = async ({
   let region: HttpTypes.StoreRegion | undefined | null;
 
   if (countryCode) {
+    console.log("Fetching region for country code:", countryCode);
     region = await getRegion(countryCode);
   } else {
+    console.log("Fetching region by ID:", regionId);
     region = await retrieveRegion(regionId!);
   }
 
   if (!region) {
-    return {
-      response: { products: [], count: 0 },
-      nextPage: null
-    };
+    console.log("WARNING: No region found for country code:", countryCode, "- continuing without region filter");
+    // Continue without region filter instead of returning empty
+  } else {
+    console.log("Region found:", region.id, region.name);
   }
 
   const headers = {
@@ -72,7 +78,8 @@ export const listProducts = async ({
   console.log("All env vars:", Object.keys(process.env).filter(k => k.includes('MEDUSA') || k.includes('NEXT_PUBLIC')));
   console.log("=== END CONNECTIVITY TEST ===");
 
-  const useCached = forceCache || (limit <= 8 && !category_id && !collection_id);
+  // Force no-cache to debug product fetching issues
+  const useCached = false; // Disabled cache for debugging
 
   return sdk.client
     .fetch<{
@@ -94,27 +101,21 @@ export const listProducts = async ({
         ...queryParams
       },
       headers,
-      next: useCached ? { revalidate: 60 } : undefined,
-      cache: useCached ? 'force-cache' : 'no-cache'
+      cache: 'no-store' // Force fresh data
     })
     .then(({ products: productsRaw, count }) => {
-      console.log("=== BASIC PRODUCT TEST ===");
-      console.log("API Response received");
-      console.log("Products array exists:", !!productsRaw);
-      console.log("Products count:", productsRaw?.length || 0);
-      console.log("Count value:", count);
+      // Minimal logging - just counts
+      if (productsRaw?.length > 0) {
+        console.log(`Products fetched: ${productsRaw.length}, count: ${count}`);
+      }
       
       if (!productsRaw || productsRaw.length === 0) {
-        console.log("NO PRODUCTS RETURNED FROM API");
         return {
           response: { products: [], count: 0 },
           nextPage: null,
           queryParams
         };
       }
-      
-      console.log("First product:", productsRaw[0]);
-      console.log("=== END BASIC TEST ===");
       
       const nextPage = count > offset + limit ? pageParam + 1 : null;
 
@@ -127,7 +128,10 @@ export const listProducts = async ({
         queryParams
       };
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error("=== PRODUCT FETCH ERROR ===");
+      console.error("Error:", error);
+      console.error("=== END ERROR ===");
       return {
         response: {
           products: [],
@@ -185,15 +189,26 @@ export const listProductsWithSort = async ({
 
   console.log("=== SORTED PRODUCTS DEBUG ===");
   console.log("Products from listProducts:", products.length);
-  console.log("Seller ID filter:", seller_id);
+  console.log("Seller ID filter (looking for):", seller_id);
+  console.log("First product seller:", products[0]?.seller);
+  console.log("First product seller ID:", products[0]?.seller?.id);
   console.log("First product thumbnail:", products[0]?.thumbnail);
   console.log("First product images:", products[0]?.images);
 
   const filteredProducts = seller_id
-    ? products.filter(product => product.seller?.id === seller_id)
+    ? products.filter(product => {
+        const matches = product.seller?.id === seller_id;
+        if (!matches && product.seller) {
+          console.log(`Product "${product.title}" seller ID "${product.seller.id}" does NOT match "${seller_id}"`);
+        }
+        return matches;
+      })
     : products;
 
   console.log("After seller filter:", filteredProducts.length);
+  if (filteredProducts.length > 0) {
+    console.log("Filtered products:", filteredProducts.map(p => ({ title: p.title, seller_id: p.seller?.id })));
+  }
 
   const sortedProducts = sortProducts(filteredProducts, sortBy);
   console.log("After sorting:", sortedProducts.length);

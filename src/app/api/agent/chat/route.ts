@@ -35,6 +35,16 @@ export async function POST(req: NextRequest) {
 
     if (lastMessage._getType() === "ai") {
       content = lastMessage.content as string
+      
+      // Clean up content - remove any raw JSON objects that might have leaked through
+      if (typeof content === 'string') {
+        // Remove any JSON-like content (arrays, objects) that shouldn't be in the response
+        content = content.replace(/\[\s*\{[\s\S]*?\}\s*\]/g, '').trim()
+        // Remove lines that look like raw JSON properties
+        content = content.replace(/^\s*\w+:\s*\[[\s\S]*?\],?\s*$/gm, '').trim()
+        // Remove empty lines and extra whitespace
+        content = content.replace(/\n{3,}/g, '\n\n').trim()
+      }
 
       // Extract products from tool responses
       const toolMessages = result.messages.filter((m: any) => m._getType() === "tool")
@@ -62,3 +72,4 @@ export async function POST(req: NextRequest) {
     )
   }
 }
+

@@ -55,7 +55,7 @@ export const AlgoliaProductsListing = ({
       : ` ${facetFilters}`
   }`
   return (
-    <InstantSearchNext searchClient={client} indexName="products">
+    <InstantSearchNext searchClient={client} indexName={process.env.NEXT_PUBLIC_SEARCH_INDEX_NAME || "products"}>
       <Configure
         query={query}
         filters={filters}

@@ -13,9 +13,11 @@ import { MobileCategoryNavbar } from './components';
 export const MobileNavbar = ({
   categories,
   parentCategories,
+  collections,
 }: {
   categories: HttpTypes.StoreProductCategory[];
   parentCategories: HttpTypes.StoreProductCategory[];
+  collections?: HttpTypes.StoreCollection[];
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -62,6 +64,7 @@ export const MobileNavbar = ({
                 onClose={closeMenuHandler}
                 categories={categories}
                 parentCategories={parentCategories}
+                collections={collections}
               />
             </div>
           </div>

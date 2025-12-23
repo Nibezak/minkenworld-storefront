@@ -25,7 +25,12 @@ export const listCategories = async ({ query }: Partial<CategoriesProps> = {}) =
     })
     .then(({ product_categories }) => product_categories);
 
+  console.log('=== CATEGORIES DEBUG ===');
+  console.log('Total categories fetched:', allCategories.length);
+  console.log('All categories:', allCategories.map(c => ({ id: c.id, name: c.name, parent_category_id: c.parent_category_id })));
+
   const parentCategories = allCategories.filter(cat => !cat.parent_category_id);
+  console.log('Parent categories (no parent_id):', parentCategories.map(c => c.name));
 
   const mainCategories = parentCategories.flatMap(parent => parent.category_children || []);
 
@@ -41,6 +46,8 @@ export const listCategories = async ({ query }: Partial<CategoriesProps> = {}) =
 
     return mainCat;
   });
+
+  console.log('=== END CATEGORIES DEBUG ===');
 
   return {
     parentCategories,

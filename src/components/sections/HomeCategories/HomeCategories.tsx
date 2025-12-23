@@ -1,31 +1,36 @@
 import { Carousel } from "@/components/cells"
 import { CategoryCard } from "@/components/organisms"
 
-export const categories: { id: number; name: string; handle: string }[] = [
+export const categories: { id: number; name: string; handle: string; image: string }[] = [
   {
     id: 1,
-    name: "Sneakers",
-    handle: "sneakers",
+    name: "Homes",
+    handle: "homes",
+    image: "/images/house.png",
   },
   {
     id: 2,
-    name: "Sandals",
-    handle: "sandals",
+    name: "Cars",
+    handle: "cars",
+    image: "/images/car.png",
   },
   {
     id: 3,
-    name: "Boots",
-    handle: "boots",
+    name: "Apparel",
+    handle: "apparel",
+    image: "/images/apparel.png",
   },
   {
     id: 4,
-    name: "Sport",
-    handle: "sport",
+    name: "Services",
+    handle: "services",
+    image: "/images/service.png",
   },
   {
     id: 5,
-    name: "Accessories",
-    handle: "accessories",
+    name: "Glow",
+    handle: "glow",
+    image: "/images/glow.png",
   },
 ]
 

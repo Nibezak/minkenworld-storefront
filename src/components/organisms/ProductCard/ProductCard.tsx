@@ -30,7 +30,7 @@ export const ProductCard = ({
   return (
     <div
       className={cn(
-        "relative group border rounded-sm flex flex-col justify-between p-1 w-full lg:w-[calc(25%-1rem)] min-w-[250px]",
+        "relative group border rounded-lg flex flex-col justify-between p-2 w-full lg:w-full min-w-[300px] transition-shadow hover:shadow-lg",
         className
       )}
     >
@@ -40,7 +40,7 @@ export const ProductCard = ({
           aria-label={`View ${productName}`}
           title={`View ${productName}`}
         >
-          <div className="overflow-hidden rounded-sm w-full h-full flex justify-center align-center ">
+          <div className="overflow-hidden rounded-lg w-full h-full flex justify-center align-center ">
             {api_product?.thumbnail || api_product?.images?.[0]?.url ? (
               <Image
                 priority
@@ -50,7 +50,7 @@ export const ProductCard = ({
                 width={100}
                 height={100}
                 sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                className="object-cover aspect-square w-full object-center h-full lg:group-hover:-mt-14 transition-all duration-300 rounded-xs"
+                className="object-cover aspect-square w-full object-center h-full lg:group-hover:-mt-2 transition-all duration-300 rounded-lg"
               />
             ) : (
               <Image
@@ -70,7 +70,7 @@ export const ProductCard = ({
           aria-label={`See more about ${productName}`}
           title={`See more about ${productName}`}
         >
-          <Button className="absolute rounded-sm bg-action text-action-on-primary h-auto lg:h-[48px] lg:group-hover:block hidden w-full uppercase bottom-1 z-10">
+          <Button className="absolute rounded-lg bg-action text-action-on-primary h-auto lg:h-[52px] lg:group-hover:block hidden w-full uppercase bottom-2 z-10 text-sm font-medium">
             See More
           </Button>
         </LocalizedClientLink>
@@ -80,14 +80,14 @@ export const ProductCard = ({
         aria-label={`Go to ${productName} page`}
         title={`Go to ${productName} page`}
       >
-        <div className="flex justify-between p-4">
+        <div className="flex justify-between p-5">
           <div className="w-full">
-            <h3 className="heading-sm truncate">{product.title}</h3>
+            <h3 className="text-lg font-semibold truncate">{product.title}</h3>
             <div className="flex items-center gap-2 mt-2">
-              <p className="font-medium">{cheapestPrice?.calculated_price}</p>
+              <p className="text-lg font-bold">{cheapestPrice?.calculated_price}</p>
               {cheapestPrice?.calculated_price !==
                 cheapestPrice?.original_price && (
-                <p className="text-sm text-gray-500 line-through">
+                <p className="text-base text-gray-500 line-through">
                   {cheapestPrice?.original_price}
                 </p>
               )}

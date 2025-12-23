@@ -44,6 +44,7 @@ export const Header = async () => {
           <MobileNavbar
             parentCategories={parentCategories}
             categories={categories}
+            collections={collections.collections}
           />
           <ParentCategoryLinks 
             parentCategories={parentCategories}

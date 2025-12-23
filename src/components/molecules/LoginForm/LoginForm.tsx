@@ -65,7 +65,7 @@ const Form = () => {
       return;
     }
     setIsAuthError(false);
-    router.push('/user');
+    router.push('/user/settings');
   };
 
   const clearApiError = () => {

@@ -30,16 +30,42 @@ export const listCollections = async (
   queryParams.limit = queryParams.limit || "100"
   queryParams.offset = queryParams.offset || "0"
 
-  return sdk.client
+  const result = await sdk.client
     .fetch<{ collections: HttpTypes.StoreCollection[]; count: number }>(
       "/store/collections",
       {
         query: queryParams,
         next,
-        cache: "force-cache",
+        cache: "no-store",
       }
     )
-    .then(({ collections }) => ({ collections, count: collections.length }))
+    .then(({ collections }) => {
+      // Sort collections by rank (lower rank = higher priority) or created_at as fallback
+      const sortedCollections = collections.sort((a, b) => {
+        const aRank = (a as any).rank;
+        const bRank = (b as any).rank;
+        
+        // If both have rank, sort by rank
+        if (aRank !== undefined && bRank !== undefined) {
+          return aRank - bRank;
+        }
+        // If only one has rank, prioritize it
+        if (aRank !== undefined) return -1;
+        if (bRank !== undefined) return 1;
+        // Fallback to alphabetical by title
+        return (a.title || '').localeCompare(b.title || '');
+      });
+      
+      return { collections: sortedCollections, count: sortedCollections.length };
+    })
+
+  console.log('=== COLLECTIONS DEBUG ===');
+  console.log('Total collections fetched:', result.collections.length);
+  console.log('Collections:', result.collections.map(c => ({ id: c.id, title: c.title, handle: c.handle, rank: (c as any).rank })));
+  console.log('Query params used:', queryParams);
+  console.log('=== END COLLECTIONS DEBUG ===');
+
+  return result
 }
 
 export const getCollectionByHandle = async (

@@ -15,12 +15,14 @@ import { MobileCategoryDrawer } from "./MobileCategoryDrawer"
 interface MobileCategoryNavbarProps {
   categories: HttpTypes.StoreProductCategory[]
   parentCategories?: HttpTypes.StoreProductCategory[]
+  collections?: HttpTypes.StoreCollection[]
   onClose?: (state: boolean) => void
 }
 
 export const MobileCategoryNavbar = ({
   categories,
   parentCategories = [],
+  collections = [],
   onClose,
 }: MobileCategoryNavbarProps) => {
   const { category } = useParams<{ category?: string }>()
@@ -74,6 +76,22 @@ export const MobileCategoryNavbar = ({
         >
           All Products
         </LocalizedClientLink>
+
+        {collections && collections.length > 0 && (
+          <div className="border-t border-gray-200 my-2 pt-2">
+            <h3 className="label-sm uppercase text-gray-500 px-4 py-2">Collections</h3>
+            {collections.map((collection) => (
+              <LocalizedClientLink
+                key={collection.id}
+                href={`/collections/${collection.handle}`}
+                onClick={handleClose}
+                className="label-md px-4 py-3 text-primary hover:bg-secondary/10 transition-colors block"
+              >
+                {collection.title}
+              </LocalizedClientLink>
+            ))}
+          </div>
+        )}
 
         {filteredCategories.map(({ id, handle, name, category_children }) => {
           const categoryUrl = `/categories/${handle}`

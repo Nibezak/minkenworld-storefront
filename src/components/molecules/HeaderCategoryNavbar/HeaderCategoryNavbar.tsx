@@ -25,7 +25,7 @@ export const HeaderCategoryNavbar = ({
 
   return (
     <nav
-      className="flex items-center p-4 gap-2 overflow-x-auto scrollbar-hide"
+      className="flex items-center p-4 gap-2 overflow-x-auto scrollbar-hide scroll-smooth"
       aria-label="Parent categories"
     >
       {parentCategories?.map(({ id, handle, name }) => {
@@ -36,7 +36,7 @@ export const HeaderCategoryNavbar = ({
             href={`/categories/${handle}`}
             onClick={() => (onClose ? onClose(false) : null)}
             className={cn(
-              "label-large uppercase text-primary hover:opacity-80 transition-opacity py-2 font-semibold px-8",
+              "label-large uppercase text-primary hover:opacity-80 transition-opacity py-2 font-semibold px-6 flex-shrink-0 whitespace-nowrap",
               isActive && "border-b border-primary"
             )}
           >

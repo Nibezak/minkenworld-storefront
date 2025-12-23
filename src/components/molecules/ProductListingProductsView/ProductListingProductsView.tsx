@@ -9,11 +9,11 @@ interface Props {
 
 const ProductListingProductsView = ({ products, apiProducts }: Props) => (
   <div className="w-full">
-    <ul className="flex flex-wrap gap-4">
+    <ul className="flex flex-wrap gap-3">
       {products.map(
         (hit) =>
           apiProducts?.find((p) => p.id === hit.objectID) && (
-            <li key={hit.objectID} className="w-full lg:w-[calc(25%-1rem)] min-w-[250px]">
+            <li key={hit.objectID} className="w-full lg:w-[calc(33.333%-0.75rem)] min-w-[300px]">
               <ProductCard
                 api_product={apiProducts?.find((p) => p.id === hit.objectID)}
                 product={hit}

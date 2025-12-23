@@ -39,16 +39,17 @@ export const ProductDetailsPage = async ({
         limit: 10,
         // Exclude current product and already included seller products
         id: { gt: "" } // Medusa hack to get all, we'll filter manually
-      },
+      } as any,
     })
 
     // Filter out current product and duplicates
-    const additionalProducts = otherProducts.filter(p => 
-      p.id !== prod.id && 
-      !displayedProducts.find(dp => dp.id === p.id)
+    // Cast IDs to string to avoid number/string mismatch issues
+    const additionalProducts = otherProducts.filter((p: any) => 
+      String(p.id) !== String(prod.id) && 
+      !displayedProducts.find((dp: any) => String(dp.id) === String(p.id))
     )
 
-    displayedProducts = [...displayedProducts, ...additionalProducts].slice(0, 10)
+    displayedProducts = [...displayedProducts, ...additionalProducts] as any[]
   }
 
   return (
@@ -64,7 +65,7 @@ export const ProductDetailsPage = async ({
       <div className="my-8">
         <HomeProductSection
           heading={sectionHeading}
-          products={displayedProducts}
+          products={displayedProducts as any}
           // seller_handle={prod.seller?.handle}
           locale={locale}
         />

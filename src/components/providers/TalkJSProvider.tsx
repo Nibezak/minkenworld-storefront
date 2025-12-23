@@ -16,13 +16,19 @@ export const TalkJSProvider = ({
   user: HttpTypes.StoreCustomer | null
 }) => {
   const syncUser = useCallback(() => {
-    if (!user) return null
+    if (!user) {
+      return new Talk.User({
+        id: "guest",
+        name: "Guest",
+        role: "guest"
+      })
+    }
     
     return new Talk.User({
       id: user.id,
       name: `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email || "Customer",
-      email: user.email || null,
-      photoUrl: null,
+      email: user.email ? user.email : undefined,
+      photoUrl: undefined,
       role: "default", // Set role to enable all TalkJS features
     })
   }, [user])
